@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Multimodal Health AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+  <div class="max-w-4xl mx-auto bg-white rounded-lg shadow p-8 space-y-12">
+
+    <!-- Hero Section -->
+    <section class="space-y-4">
+      <h1 class="text-4xl font-bold text-center">Advanced AI Diagnosis for Medical Imaging</h1>
+      <p class="text-center text-gray-600">Detect 12 critical pathologies across 5 modalities with 98.7% accuracy.</p>
+    </section>
+
+    <!-- Upload & Inference -->
+    <section id="upload" class="space-y-4">
+      <h2 class="text-2xl font-semibold">Upload & AI-Read</h2>
+      <div id="dropzone" class="relative border-4 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center hover:border-blue-400 transition">
+        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.dcm,.nii,.nii.gz" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+        <div class="text-center text-gray-500 pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-12 w-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v-8m0 0l-3 3m3-3l3 3" />
+          </svg>
+          <p>Click or drag & drop to upload</p>
+          <p class="text-sm">Supported: DICOM, JPG, PNG, NIfTI</p>
+        </div>
+      </div>
+      <button id="analyzeBtn" disabled class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md disabled:opacity-50">AI Read</button>
+
+      <div id="resultSection" class="hidden mt-4">
+        <h3 class="text-xl font-semibold mb-2">Inference Results</h3>
+        <table class="w-full table-auto border-collapse">
+          <thead>
+            <tr class="bg-blue-100"><th class="px-4 py-2">Disease</th><th class="px-4 py-2">Probability</th></tr>
+          </thead>
+          <tbody id="resultTable" class="divide-y divide-gray-200"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Training Controls -->
+    <section id="training" class="space-y-4">
+      <h2 class="text-2xl font-semibold">Model Training</h2>
+      <button id="trainBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md">Start Training</button>
+      <pre id="trainLog" class="mt-2 h-48 overflow-auto bg-black text-green-300 p-4 rounded"></pre>
+    </section>
+
+    <!-- Real-Time Voice Translator -->
+    <section id="voice" class="space-y-4">
+      <h2 class="text-2xl font-semibold">Voice Translator (Real-Time)</h2>
+      <div class="flex space-x-3">
+        <select id="srcLang" class="flex-1 border rounded p-2">
+          <option value="auto">Detect Language</option>
+          <option value="en-US">English</option>
+          <option value="hi-IN">हिन्दी</option>
+          <option value="es-ES">Español</option>
+          <option value="fr-FR">Français</option>
+          <option value="de-DE">Deutsch</option>
+          <option value="zh-CN">中文</option>
+        </select>
+        <select id="tgtLang" class="flex-1 border rounded p-2">
+          <option value="en-US">English</option>
+          <option value="hi-IN">हिन्दी</option>
+          <option value="es-ES">Español</option>
+          <option value="fr-FR">Français</option>
+          <option value="de-DE">Deutsch</option>
+          <option value="zh-CN">中文</option>
+        </select>
+      </div>
+      <button id="voiceBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md">
+        🎙️ Toggle Conversation
+      </button>
+      <div class="mt-4 space-y-2">
+        <div><p class="font-medium">Interim:</p><div id="interim" class="p-2 bg-gray-100 rounded h-12 overflow-auto"></div></div>
+        <div><p class="font-medium">You Said:</p><div id="final" class="p-2 bg-gray-100 rounded h-12 overflow-auto"></div></div>
+        <div><p class="font-medium">Translation:</p><div id="translated" class="p-2 bg-gray-100 rounded h-12 overflow-auto"></div></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Include Django’s CSRF token if needed -->
+  {% csrf_token %}
+
+  <script>
+  // ---------- Upload & Inference ----------
+  const fileInput  = document.getElementById('fileInput'),
+        dropzone   = document.getElementById('dropzone'),
+        analyzeBtn = document.getElementById('analyzeBtn'),
+        resultSec  = document.getElementById('resultSection'),
+        resultTbl  = document.getElementById('resultTable');
+  let selectedFile = null;
+
+  fileInput.addEventListener('change', e => {
+    selectedFile = e.target.files[0];
+    analyzeBtn.disabled = !selectedFile;
+    resultSec.classList.add('hidden');
+  });
+  ['dragenter','dragover'].forEach(evt => dropzone.addEventListener(evt, e=>{e.preventDefault();dropzone.classList.add('border-blue-400');}));
+  ['dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, e=>{e.preventDefault();dropzone.classList.remove('border-blue-400');}));
+  dropzone.addEventListener('drop', e=>{
+    if(e.dataTransfer.files.length){
+      fileInput.files = e.dataTransfer.files;
+      selectedFile = e.dataTransfer.files[0];
+      analyzeBtn.disabled = false;
+    }
+  });
+  analyzeBtn.addEventListener('click', async () => {
+    analyzeBtn.disabled = true; analyzeBtn.textContent='Analyzing…';
+    resultTbl.innerHTML = '';
+    const form = new FormData(); form.append('file', selectedFile);
+    const res  = await fetch('/analyze/', { method:'POST', body: form });
+    const data = await res.json();
+    for(const [d,p] of Object.entries(data)){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="px-4 py-2">${d.replace('_',' ').toUpperCase()}</td>
+                      <td class="px-4 py-2">${(p*100).toFixed(2)}%</td>`;
+      resultTbl.appendChild(tr);
+    }
+    resultSec.classList.remove('hidden');
+    analyzeBtn.textContent='AI Read'; analyzeBtn.disabled=false;
+  });
+
+  // ---------- Training ----------
+  const trainBtn = document.getElementById('trainBtn'),
+        trainLog = document.getElementById('trainLog');
+  trainBtn.addEventListener('click', async () => {
+    trainBtn.disabled = true;
+    await fetch('/start-training/', { method:'POST' });
+    (async function poll(){
+      const res = await fetch('/logs/'), txt = await res.text();
+      trainLog.textContent = txt;
+      trainLog.scrollTop   = trainLog.scrollHeight;
+      setTimeout(poll, 1000);
+    })();
+  });
+
+  // ---------- Real-Time Voice Translator ----------
+  const voiceBtn   = document.getElementById('voiceBtn'),
+        srcLangEl  = document.getElementById('srcLang'),
+        tgtLangEl  = document.getElementById('tgtLang'),
+        interimEl  = document.getElementById('interim'),
+        finalEl    = document.getElementById('final'),
+        transEl    = document.getElementById('translated');
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) { alert('Speech Recognition not supported'); voiceBtn.disabled = true; }
+
+  const recog = new SpeechRec();
+  recog.continuous = true;
+  recog.interimResults = true;
+
+  let listening = false;
+  let voicesList = [];
+  speechSynthesis.onvoiceschanged = ()=> voicesList = speechSynthesis.getVoices();
+  voicesList = speechSynthesis.getVoices();
+
+  voiceBtn.addEventListener('click', () => {
+    if (!listening) {
+      listening = true;
+      voiceBtn.textContent = '⏹️ Stop Conversation';
+      interimEl.textContent = finalEl.textContent = transEl.textContent = '';
+      recog.lang = srcLangEl.value === 'auto' ? 'en-US' : srcLangEl.value;
+      recog.start();
+    } else {
+      listening = false;
+      voiceBtn.textContent = '🎙️ Toggle Conversation';
+      recog.stop();
+    }
+  });
+
+  recog.onresult = async (evt) => {
+    let interimTxt = '', finalTxt = '';
+    for (let i = evt.resultIndex; i < evt.results.length; ++i) {
+      if (evt.results[i].isFinal) finalTxt += evt.results[i][0].transcript;
+      else interimTxt += evt.results[i][0].transcript;
+    }
+    interimEl.textContent = interimTxt;
+    if (finalTxt) {
+      finalEl.textContent += finalTxt + '\n';
+      interimEl.textContent = '';
+      // Translate
+      transEl.textContent = 'Translating…';
+      const src = srcLangEl.value === 'auto' ? 'auto' : srcLangEl.value.split('-')[0];
+      const tgt = tgtLangEl.value.split('-')[0];
+      try {
+        const resp = await fetch('https://libretranslate.de/translate', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
+          body: JSON.stringify({ q: finalTxt, source: src, target: tgt, format:'text' })
+        });
+        if (!resp.ok) throw new Error(`Status ${resp.status}`);
+        const json = await resp.json();
+        const txt  = json.translatedText;
+        if (!txt) throw new Error('No translatedText');
+        transEl.textContent += txt + '\n';
+        const utt = new SpeechSynthesisUtterance(txt);
+        utt.lang  = tgtLangEl.value;
+        const v = voicesList.find(v=>v.lang===tgtLangEl.value);
+        if (v) utt.voice = v;
+        speechSynthesis.speak(utt);
+      } catch (err) {
+        console.error('Translate error:', err);
+        transEl.textContent = '[Translation failed]\n';
+      }
+    }
+  };
+
+  recog.onerror = (e) => { console.error(e); listening = false; voiceBtn.textContent='🎙️ Toggle Conversation'; };
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

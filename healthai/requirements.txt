@@ -1,0 +1,10 @@
+torch
+torchvision
+monai
+monai-deploy-app-sdk
+pydicom
+flwr
+nibabel
+pandas
+Pillow
+tensorboard

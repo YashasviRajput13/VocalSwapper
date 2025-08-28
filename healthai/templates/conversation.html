@@ -1,0 +1,697 @@
+{% include 'base/header.html' %}
+<div id="app" class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Header -->
+    <header class="mb-10 text-center">
+        <div class="flex justify-center mb-4">
+            <div class="bg-gradient-to-r from-blue-500 to-green-500 p-1 rounded-full">
+                <div class="bg-white p-1 rounded-full">
+                    <div
+                        class="bg-gradient-to-r from-blue-400 to-green-400 w-16 h-16 rounded-full flex items-center justify-center">
+                        <i class="fas fa-microphone-alt text-white text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="text-4xl font-bold mb-2 header-gradient">
+            VOCALSWAPPER
+        </h1>
+        <p class="text-xl text-gray-600 font-medium mb-3">Multilingual Voice-to-Voice Converter with Multimodal Health
+            AI</p>
+        <p class="text-gray-500 max-w-2xl mx-auto">Real-time voice conversion and translation for seamless
+            doctor-patient communication</p>
+
+        <div class="mt-4 bg-blue-50 inline-block px-4 py-2 rounded-full">
+            <!-- <p class="text-sm text-blue-700">Submitted by <span class="font-semibold"></span>
+                </p> -->
+        </div>
+    </header>
+
+    <!-- Doctor & Patient Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <!-- Doctor Card -->
+        <div class="card bg-white glow-border">
+            <div class="card-header b-gradient-to-r from-blue-50 to-indigo-50">
+                <h2 class="text-xl font-bold flex items-center text-blue-800">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-user-md text-blue-600"></i>
+                    </div>
+                    Medical Practitioner
+                </h2>
+            </div>
+
+            <div class="card-body">
+                <!-- Language Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Language Preference</label>
+                    <div class="language-select">
+                        <select v-model="doctorLang"
+                            class="w-full bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-lg">
+                            <option value="en">English</option>
+                            <option value="hi">हिन्दी (Hindi)</option>
+                            <option value="es">Español (Spanish)</option>
+                            <option value="fr">Français (French)</option>
+                            <option value="de">Deutsch (German)</option>
+                            <option value="ja">日本語 (Japanese)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Recording Button -->
+                <button @click="toggleRecording('doctor')"
+                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-semibold
+                               hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center mb-6"
+                    :class="{'pulse': isRecording.doctor, 'shadow-lg': !isRecording.doctor}">
+                    <i class="fas text-xl mr-3" :class="isRecording.doctor ? 'fa-stop' : 'fa-microphone'"></i>
+                    {% verbatim %}{{ isRecording.doctor ? 'Stop Recording' : 'Start Doctor Recording' }}{% endverbatim
+                    %}
+                </button>
+
+                <!-- Waveform Visualization -->
+                {% verbatim %}
+                <div v-if="isRecording.doctor" class="py-5 mb-6 bg-blue-50 rounded-xl">
+                    <div class="text-center text-sm text-blue-700 font-medium mb-3">LIVE RECORDING</div>
+                    <div class="waveform flex items-end justify-center h-16 px-4">
+                        <div v-for="(bar, index) in waveform.doctor" :key="'doc-'+index" class="wave-bar doctor-wave"
+                            :style="{ height: bar/3 + 'px' }"></div>
+                    </div>
+                </div>
+                {% endverbatim %}
+
+                <!-- Transcripts -->
+                <div class="space-y-5">
+                    <div class="p-4 bg-blue-50 rounded-xl">
+                        <div class="text-sm font-semibold text-blue-700 mb-2 flex items-center">
+                            <i class="fas fa-comment-medical mr-2"></i>Doctor Said:
+                        </div>
+                        <div class="min-h-[50px] p-3 bg-white rounded-lg border border-blue-100">
+                            <p class="text-gray-800" v-text="doctorTranscript || 'Waiting for input...'"></p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-green-50 rounded-xl">
+                        <div class="text-sm font-semibold text-green-700 mb-2 flex items-center">
+                            <i class="fas fa-ear-listen mr-2"></i>Patient Hears:
+                        </div>
+                        <div class="min-h-[50px] p-3 bg-white rounded-lg border border-green-100 mb-3">
+                            <p class="text-gray-800" v-text="patientTranslation || 'Translation will appear here'"></p>
+                        </div>
+                        <div v-if="patientAudio" class="audio-player">
+                            <audio :src="patientAudio" controls class="w-full"></audio>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Card -->
+        <div class="card bg-white glow-border">
+            <div class="card-header bg-gradient-to-r from-green-50 to-teal-50">
+                <h2 class="text-xl font-bold flex items-center text-green-800">
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                        <i class="fas fa-user-injured text-green-600"></i>
+                    </div>
+                    Patient
+                </h2>
+            </div>
+
+            <div class="card-body">
+                <!-- Language Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Language Preference</label>
+                    <div class="language-select">
+                        <select v-model="patientLang"
+                            class="w-full bg-transparent focus:outline-none focus:ring-2 focus:ring-green-300 rounded-lg">
+                            <option value="en">English</option>
+                            <option value="hi">हिन्दी (Hindi)</option>
+                            <option value="es">Español (Spanish)</option>
+                            <option value="fr">Français (French)</option>
+                            <option value="de">Deutsch (German)</option>
+                            <option value="ja">日本語 (Japanese)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Recording Button -->
+                <button @click="toggleRecording('patient')"
+                    class="w-full bg-gradient-to-r from-green-600 to-teal-600 text-white py-4 rounded-xl font-semibold
+                               hover:from-green-700 hover:to-teal-700 transition-all duration-300 flex items-center justify-center mb-6"
+                    :class="{'pulse': isRecording.patient, 'shadow-lg': !isRecording.patient}">
+                    <i class="fas text-xl mr-3" :class="isRecording.patient ? 'fa-stop' : 'fa-microphone'"></i>
+                    {% verbatim %}{{ isRecording.patient ? 'Stop Recording' : 'Start Patient Recording' }}{% endverbatim
+                    %}
+                </button>
+
+                <!-- Waveform Visualization -->
+                {% verbatim %}
+                <div v-if="isRecording.patient" class="py-5 mb-6 bg-green-50 rounded-xl">
+                    <div class="text-center text-sm text-green-700 font-medium mb-3">LIVE RECORDING</div>
+                    <div class="waveform flex items-end justify-center h-16 px-4">
+                        <div v-for="(bar, index) in waveform.patient" :key="'pat-'+index" class="wave-bar patient-wave"
+                            :style="{ height: bar/3 + 'px' }"></div>
+                    </div>
+                </div>
+                {% endverbatim %}
+
+                <!-- Transcripts -->
+                <div class="space-y-5">
+                    <div class="p-4 bg-green-50 rounded-xl">
+                        <div class="text-sm font-semibold text-green-700 mb-2 flex items-center">
+                            <i class="fas fa-comment-medical mr-2"></i>Patient Said:
+                        </div>
+                        <div class="min-h-[50px] p-3 bg-white rounded-lg border border-green-100">
+                            <p class="text-gray-800" v-text="patientTranscript || 'Waiting for input...'"></p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-blue-50 rounded-xl">
+                        <div class="text-sm font-semibold text-blue-700 mb-2 flex items-center">
+                            <i class="fas fa-ear-listen mr-2"></i>Doctor Hears:
+                        </div>
+                        <div class="min-h-[50px] p-3 bg-white rounded-lg border border-blue-100 mb-3">
+                            <p class="text-gray-800" v-text="doctorTranslation || 'Translation will appear here'"></p>
+                        </div>
+                        <div v-if="doctorAudio" class="audio-player">
+                            <audio :src="doctorAudio" controls class="w-full"></audio>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversation History -->
+    <div class="card bg-white mb-10">
+        <div class="card-header bg-gradient-to-r from-gray-50 to-slate-50">
+            <h2 class="text-xl font-bold flex items-center text-gray-800">
+                <i class="fas fa-history mr-3 text-indigo-600"></i>Conversation History
+            </h2>
+        </div>
+
+        {% verbatim %}
+        <div class="card-body">
+            <div v-if="conversationHistory.length === 0" class="text-center py-10">
+                <i class="fas fa-comments text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">No conversation history yet. Start speaking to see the translations here.</p>
+            </div>
+
+            <div v-else class="flex flex-col space-y-4 max-h-[420px] overflow-y-auto p-2">
+                <div v-for="(message, index) in conversationHistory" :key="index" class="history-item flex flex-col"
+                    :class="message.speaker === 'doctor' ? 'items-start' : 'items-end'">
+
+                    <div class="relative w-full">
+                        <div class="conversation-bubble"
+                            :class="message.speaker === 'doctor' ? 'speaker-a' : 'speaker-b'">
+                            <div class="speaker-label"
+                                :class="message.speaker === 'doctor' ? 'doctor-label' : 'patient-label'">
+                                <span v-if="message.speaker === 'doctor'"><i class="fas fa-user-md mr-1"></i>
+                                    Doctor</span>
+                                <span v-else><i class="fas fa-user-injured mr-1"></i> Patient</span>
+                            </div>
+
+                            <div class="text-gray-800 font-medium mb-1">{{ message.original }}</div>
+
+                            <div v-if="message.translated" class="mt-2 pt-2 border-t border-gray-100">
+                                <div class="text-xs text-gray-500 mb-1">Translated:</div>
+                                <div class="text-gray-700">{{ message.translated }}</div>
+                            </div>
+                        </div>
+
+                        <div v-if="message.audio" class="mt-2" :class="message.speaker === 'doctor' ? 'ml-4' : 'mr-4'">
+                            <div class="audio-player">
+                                <audio :src="message.audio" controls class="w-full"></audio>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-gray-400 mt-1"
+                            :class="message.speaker === 'doctor' ? 'ml-4' : 'mr-4 text-right'">
+                            {{ message.timestamp }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endverbatim %}
+    </div>
+
+
+</div>
+
+<script>
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                doctorLang: 'en',
+                patientLang: 'hi',
+                isRecording: {
+                    doctor: false,
+                    patient: false
+                },
+                waveform: {
+                    doctor: Array(40).fill(5),
+                    patient: Array(40).fill(5)
+                },
+                doctorTranscript: '',
+                patientTranscript: '',
+                doctorTranslation: '',
+                patientTranslation: '',
+                doctorAudio: '',
+                patientAudio: '',
+                conversationHistory: []
+            }
+        },
+        mounted() {
+            this.initializeSpeechRecognition();
+
+            // Simulate initial conversation for demo
+            setTimeout(() => {
+                this.conversationHistory = [
+                    // {
+                    //     speaker: 'doctor',
+                    //     original: 'Hello, what brings you in today?',
+                    //     translated: 'Hola, ¿qué lo trae por aquí hoy?',
+                    //     timestamp: '10:30 AM',
+                    //     audio: 'https://example.com/audio1.mp3'
+                    // },
+                    // {
+                    //     speaker: 'patient',
+                    //     original: 'Tengo dolor de cabeza y fiebre desde ayer.',
+                    //     translated: 'I have had a headache and fever since yesterday.',
+                    //     timestamp: '10:32 AM',
+                    //     audio: 'https://example.com/audio2.mp3'
+                    // },
+                    // {
+                    //     speaker: 'doctor',
+                    //     original: 'I see. Any other symptoms?',
+                    //     translated: 'Ya veo. ¿Algún otro síntoma?',
+                    //     timestamp: '10:33 AM',
+                    //     audio: 'https://example.com/audio3.mp3'
+                    // }
+                ];
+            }, 1000);
+
+        },
+        methods: {
+            initializeSpeechRecognition() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    console.error('Speech Recognition not supported');
+                    alert('Your browser does not support speech recognition. Please use Chrome or Edge.');
+                    return;
+                }
+
+                // Doctor recognition
+                this.doctorRecognition = new SpeechRecognition();
+                this.doctorRecognition.continuous = true;
+                this.doctorRecognition.interimResults = true;
+                this.doctorRecognition.onresult = (event) => this.handleRecognition(event, 'doctor');
+                this.doctorRecognition.onerror = (event) => this.handleRecognitionError(event, 'doctor');
+
+                // Patient recognition
+                this.patientRecognition = new SpeechRecognition();
+                this.patientRecognition.continuous = true;
+                this.patientRecognition.interimResults = true;
+                this.patientRecognition.onresult = (event) => this.handleRecognition(event, 'patient');
+                this.patientRecognition.onerror = (event) => this.handleRecognitionError(event, 'patient');
+            },
+
+            handleRecognition(event, speaker) {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (transcript) {
+                    if (speaker === 'doctor') {
+                        this.doctorTranscript += transcript + ' ';
+                        this.processDoctorSpeech(transcript);
+                    } else {
+                        this.patientTranscript += transcript + ' ';
+                        this.processPatientSpeech(transcript);
+                    }
+                }
+
+                // Update waveform animation
+                if (speaker === 'doctor') {
+                    this.waveform.doctor = this.waveform.doctor.map(() => Math.floor(Math.random() * 60) + 10);
+                } else {
+                    this.waveform.patient = this.waveform.patient.map(() => Math.floor(Math.random() * 60) + 10);
+                }
+            },
+
+            handleRecognitionError(event, speaker) {
+                console.error(`${speaker} recognition error:`, event.error);
+                this.isRecording[speaker] = false;
+                alert(`Speech recognition error: ${event.error}. Please try again.`);
+            },
+
+            async toggleRecording(speaker) {
+                if (!this.isRecording[speaker]) {
+                    try {
+                        // Reset transcripts
+                        if (speaker === 'doctor') {
+                            this.doctorTranscript = '';
+                            this.patientTranslation = '';
+                        } else {
+                            this.patientTranscript = '';
+                            this.doctorTranslation = '';
+                        }
+
+                        // Start recognition
+                        if (speaker === 'doctor') {
+                            this.doctorRecognition.lang = this.doctorLang;
+                            this.doctorRecognition.start();
+                        } else {
+                            this.patientRecognition.lang = this.patientLang;
+                            this.patientRecognition.start();
+                        }
+
+                        this.isRecording[speaker] = true;
+                    } catch (error) {
+                        console.error(`Error accessing ${speaker} microphone:`, error);
+                        alert(`Could not access ${speaker} microphone. Please check permissions.`);
+                    }
+                } else {
+                    if (speaker === 'doctor') {
+                        this.doctorRecognition.stop();
+                    } else {
+                        this.patientRecognition.stop();
+                    }
+                    this.isRecording[speaker] = false;
+                }
+            },
+
+            async processDoctorSpeech(text) {
+                try {
+                    // Translate for patient
+                    const response = await axios.post('/translate-conversation/', {
+                        text: text,
+                        speaker_lang: this.doctorLang,
+                        listener_lang: this.patientLang
+                    });
+
+                    if (response.data.status === 'success') {
+                        this.patientTranslation = response.data.translated_text;
+                        this.patientAudio = response.data.audio_url;
+
+                        // Add to history
+                        this.conversationHistory.push({
+                            speaker: 'doctor',
+                            original: text,
+                            translated: response.data.translated_text,
+                            audio: response.data.audio_url,
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                    }
+                } catch (error) {
+                    console.error('Doctor translation error:', error);
+                }
+            },
+
+            async processPatientSpeech(text) {
+                try {
+                    // Translate for doctor
+                    const response = await axios.post('/translate-conversation/', {
+                        text: text,
+                        speaker_lang: this.patientLang,
+                        listener_lang: this.doctorLang
+                    });
+
+                    if (response.data.status === 'success') {
+                        this.doctorTranslation = response.data.translated_text;
+                        this.doctorAudio = response.data.audio_url;
+
+                        // Add to history
+                        this.conversationHistory.push({
+                            speaker: 'patient',
+                            original: text,
+                            translated: response.data.translated_text,
+                            audio: response.data.audio_url,
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                    }
+                } catch (error) {
+                    console.error('Patient translation error:', error);
+                }
+            }
+        }
+    }).mount('#app');
+</script>
+{% include 'base/footer.html' %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                doctorLang: 'en',
+                patientLang: 'hi',
+                isRecording: {
+                    doctor: false,
+                    patient: false
+                },
+                waveform: {
+                    doctor: Array(30).fill(5),
+                    patient: Array(30).fill(5)
+                },
+                doctorTranscript: '',
+                patientTranscript: '',
+                doctorTranslation: '',
+                patientTranslation: '',
+                doctorAudio: '',
+                patientAudio: '',
+                doctorContext: null,
+                patientContext: null,
+                doctorAnalyser: null,
+                patientAnalyser: null,
+                conversationHistory: []
+            }
+        },
+        mounted() {
+            this.initializeSpeechRecognition();
+        },
+        methods: {
+            initializeSpeechRecognition() {
+                const SpeechRecognition = window.SpeechRecognition ||
+                    window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    console.error('Speech Recognition not supported');
+                    return;
+                }
+
+                // Doctor recognition
+                this.doctorRecognition = new SpeechRecognition();
+                this.doctorRecognition.continuous = true;
+                this.doctorRecognition.interimResults = true;
+                this.doctorRecognition.onresult = (event) => this.handleRecognition(event, 'doctor');
+                this.doctorRecognition.onerror = (event) => this.handleRecognitionError(event, 'doctor');
+
+                // Patient recognition
+                this.patientRecognition = new SpeechRecognition();
+                this.patientRecognition.continuous = true;
+                this.patientRecognition.interimResults = true;
+                this.patientRecognition.onresult = (event) => this.handleRecognition(event, 'patient');
+                this.patientRecognition.onerror = (event) => this.handleRecognitionError(event, 'patient');
+            },
+
+            handleRecognition(event, speaker) {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (transcript) {
+                    if (speaker === 'doctor') {
+                        this.doctorTranscript += transcript + ' ';
+                        this.processDoctorSpeech(transcript);
+                    } else {
+                        this.patientTranscript += transcript + ' ';
+                        this.processPatientSpeech(transcript);
+                    }
+                }
+            },
+
+            handleRecognitionError(event, speaker) {
+                console.error(`${speaker} recognition error:`, event.error);
+                this.isRecording[speaker] = false;
+            },
+
+            async toggleRecording(speaker) {
+                if (!this.isRecording[speaker]) {
+                    try {
+                        // Initialize audio context
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                        // Get microphone stream
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                        // Create analyzer for visualization
+                        const analyser = audioContext.createAnalyser();
+                        const source = audioContext.createMediaStreamSource(stream);
+                        source.connect(analyser);
+                        analyser.fftSize = 256;
+
+                        if (speaker === 'doctor') {
+                            this.doctorContext = audioContext;
+                            this.doctorAnalyser = analyser;
+                            this.visualizeAudio('doctor');
+                            this.doctorRecognition.lang = this.doctorLang;
+                            this.doctorRecognition.start();
+                        } else {
+                            this.patientContext = audioContext;
+                            this.patientAnalyser = analyser;
+                            this.visualizeAudio('patient');
+                            this.patientRecognition.lang = this.patientLang;
+                            this.patientRecognition.start();
+                        }
+
+                        this.isRecording[speaker] = true;
+                    } catch (error) {
+                        console.error(`Error accessing ${speaker} microphone:`, error);
+                        alert(`Could not access ${speaker} microphone. Please check permissions.`);
+                    }
+                } else {
+                    if (speaker === 'doctor') {
+                        this.doctorRecognition.stop();
+                    } else {
+                        this.patientRecognition.stop();
+                    }
+                    this.isRecording[speaker] = false;
+                }
+            },
+
+            visualizeAudio(speaker) {
+                const analyser = speaker === 'doctor' ? this.doctorAnalyser : this.patientAnalyser;
+                if (!analyser) return;
+
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                const draw = () => {
+                    if (!this.isRecording[speaker]) return;
+
+                    analyser.getByteFrequencyData(dataArray);
+                    this.waveform[speaker] = Array.from(dataArray).slice(0, 30);
+                    requestAnimationFrame(draw);
+                };
+
+                draw();
+            },
+
+            async processDoctorSpeech(text) {
+                try {
+                    // Translate for patient
+                    const response = await axios.post('/translate-conversation/', {
+                        text: text,
+                        speaker_lang: this.doctorLang,
+                        listener_lang: this.patientLang
+                    });
+
+                    if (response.data.status === 'success') {
+                        this.patientTranslation = response.data.translated_text;
+                        this.patientAudio = response.data.audio_url;
+
+                        // Add to history
+                        this.conversationHistory.push({
+                            speaker: 'doctor',
+                            original: text,
+                            translated: response.data.translated_text,
+                            audio: response.data.audio_url,
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                    }
+                } catch (error) {
+                    console.error('Doctor translation error:', error);
+                }
+            },
+
+            async processPatientSpeech(text) {
+                try {
+                    // Translate for doctor
+                    const response = await axios.post('/translate-conversation/', {
+                        text: text,
+                        speaker_lang: this.patientLang,
+                        listener_lang: this.doctorLang
+                    });
+
+                    if (response.data.status === 'success') {
+                        this.doctorTranslation = response.data.translated_text;
+                        this.doctorAudio = response.data.audio_url;
+
+                        // Add to history
+                        this.conversationHistory.push({
+                            speaker: 'patient',
+                            original: text,
+                            translated: response.data.translated_text,
+                            audio: response.data.audio_url,
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                    }
+                } catch (error) {
+                    console.error('Patient translation error:', error);
+                }
+            }
+        }
+    }).mount('#app');
+</script>

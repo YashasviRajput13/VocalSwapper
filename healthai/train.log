@@ -1,0 +1,62 @@
+C:\Users\ansh raj\Desktop\monai\django\venv\Lib\site-packages\torch\nn\modules\transformer.py:382: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.self_attn.num_heads is odd
+  warnings.warn(
+C:\Users\ansh raj\Desktop\monai\django\healthai\train.py:23: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler= GradScaler()
+C:\Users\ansh raj\Desktop\monai\django\venv\Lib\site-packages\torch\amp\grad_scaler.py:136: UserWarning: torch.cuda.amp.GradScaler is enabled, but CUDA is not available.  Disabling.
+  warnings.warn(
+C:\Users\ansh raj\Desktop\monai\django\healthai\train.py:33: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast():
+C:\Users\ansh raj\Desktop\monai\django\venv\Lib\site-packages\torch\amp\autocast_mode.py:266: UserWarning: User provided device_type of 'cuda', but CUDA is not available. Disabling
+  warnings.warn(
+INFO:root:Epoch 1/100, Loss=1.8578
+INFO:root:Epoch 2/100, Loss=2.5288
+INFO:root:Epoch 3/100, Loss=1.7200
+INFO:root:Epoch 4/100, Loss=2.2003
+INFO:root:Epoch 5/100, Loss=1.7897
+INFO:root:Epoch 6/100, Loss=2.3843
+INFO:root:Epoch 7/100, Loss=1.9700
+INFO:root:Epoch 8/100, Loss=1.5648
+INFO:root:Epoch 9/100, Loss=1.6423
+INFO:root:Epoch 10/100, Loss=1.8905
+INFO:root:Epoch 11/100, Loss=2.1410
+INFO:root:Epoch 12/100, Loss=1.7263
+INFO:root:Epoch 13/100, Loss=1.3607
+INFO:root:Epoch 14/100, Loss=1.7960
+INFO:root:Epoch 15/100, Loss=1.9199
+INFO:root:Epoch 16/100, Loss=2.4736
+INFO:root:Epoch 17/100, Loss=1.8648
+INFO:root:Epoch 18/100, Loss=1.5173
+INFO:root:Epoch 19/100, Loss=1.3021
+INFO:root:Epoch 20/100, Loss=2.2598
+INFO:root:Epoch 21/100, Loss=1.8500
+INFO:root:Epoch 22/100, Loss=1.4548
+INFO:root:Epoch 23/100, Loss=1.2849
+INFO:root:Epoch 24/100, Loss=1.5548
+INFO:root:Epoch 25/100, Loss=1.7490
+INFO:root:Epoch 26/100, Loss=1.2598
+INFO:root:Epoch 27/100, Loss=1.5831
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+KERNELBASE.dll     00007FFB4261D03D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFB4367E8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFB4545C5DC  Unknown               Unknown  Unknown
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+KERNELBASE.dll     00007FFB4261D03D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFB4367E8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFB4545C5DC  Unknown               Unknown  Unknown
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+KERNELBASE.dll     00007FFB4261D03D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFB4367E8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFB4545C5DC  Unknown               Unknown  Unknown
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+KERNELBASE.dll     00007FFB4261D03D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFB4367E8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFB4545C5DC  Unknown               Unknown  Unknown
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+KERNELBASE.dll     00007FFB4261D03D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFB4367E8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFB4545C5DC  Unknown               Unknown  Unknown

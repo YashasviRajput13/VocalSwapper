@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOCALSWAPPER - Multilingual Voice-to-Voice Converter with Multimode Health AI</title>
+    <!-- Favicon -->
+    <link rel="icon" href="https://dev-era.in/static/vs.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://dev-era.in/static/vs.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://dev-era.in/static/css/button.css">
+    <style>
+        :root {
+            --doctor-primary: #1976D2;
+            --doctor-secondary: #E3F2FD;
+            --patient-primary: #388E3C;
+            --patient-secondary: #E8F5E9;
+            --app-bg: #f8fafc;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #f8fafc 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .header-gradient {
+            background: linear-gradient(120deg, var(--doctor-primary) 0%, var(--patient-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .wave-bar {
+            width: 4px;
+            margin: 0 1.5px;
+            border-radius: 2px;
+            transition: height 0.15s ease-out;
+        }
+
+        .doctor-wave {
+            background: linear-gradient(to top, #64b5f6, #1976D2);
+        }
+
+        .patient-wave {
+            background: linear-gradient(to top, #81c784, #388E3C);
+        }
+
+        .conversation-bubble {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .conversation-bubble:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .speaker-a {
+            background-color: var(--doctor-secondary);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            border-left: 4px solid var(--doctor-primary);
+        }
+
+        .speaker-b {
+            background-color: var(--patient-secondary);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            border-right: 4px solid var(--patient-primary);
+        }
+
+        .card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 15px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(25, 118, 210, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(25, 118, 210, 0);
+            }
+        }
+
+        .history-item {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .language-select {
+            background-color: white;
+            border-radius: 10px;
+            padding: 8px 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .speaker-label {
+            position: absolute;
+            top: -12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .doctor-label {
+            background-color: var(--doctor-primary);
+            color: white;
+            left: 15px;
+        }
+
+        .patient-label {
+            background-color: var(--patient-primary);
+            color: white;
+            right: 15px;
+        }
+
+        .audio-player {
+            border-radius: 10px;
+            background: white;
+            padding: 8px 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .glow-border {
+            position: relative;
+        }
+
+        .glow-border::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 18px;
+            background: linear-gradient(45deg, var(--doctor-primary), var(--patient-primary));
+            z-index: -1;
+            animation: glow 3s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="h-full overflow-auto">
+        <div class="h-full w-full">
+            <div class="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+                <header
+                    class="bg-gradient-to-r from-white to-blue-100 shadow-sm z-50 fixed top-0 left-0 right-0 transition-all duration-300 ease-in-out bg-opacity-95">
+                    <div class="container mx-auto  lg:px-28 md:px-12 px-6">
+                        <div class="flex justify-between items-center h-16">
+                            <div class="flex-shrink-0"><a class="flex items-center" href="/"><img
+                                        src="https://dev-era.in/static/vs.png" alt="CT Read logo" class="h-8 w-auto">
+                                    <!-- <span
+                                    class="ml-2 text-xl font-bold text-gray-800"></span> -->
+                                </a></div>
+                            <!-- Hamburger button -->
+                            <div class="-mr-2 -my-2 lg:hidden relative z-50">
+                                <button id="mobileMenuButton"
+                                    class="bg-white rounded-md p-2 inline-flex items-center justify-center focus:ring-2 focus:ring-indigo-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- <div class="relative z-50 hidden"> -->
+                            <div id="mobileMenu" class="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white py-4 overflow-y-auto
+            transform translate-x-full transition-transform duration-300">
+                                <div class="flex items-center justify-between px-4">
+                                    <div class="text-xl font-bold text-gray-900">Menu</div>
+                                    <button id="closeMobileMenu"
+                                        class="p-2 text-gray-400 hover:bg-gray-100 rounded focus:ring-2 focus:ring-indigo-500">
+                                        <span class="sr-only">Close menu</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="mt-6 px-4">
+                                    <div class="flex flex-col gap-y-4"><a class="text-base font-medium text-blue-600"
+                                            title="X-ray AI Read" href="/x-ray">X-ray</a><a
+                                            class="text-base font-medium text-gray-900 hover:text-gray-700"
+                                            title="CT Scans AI Read" href="/ct-scan">CT Scans</a><a
+                                            class="text-base font-medium text-gray-900 hover:text-gray-700"
+                                            title="MRI AI Read" href="/mri">MRI</a><a
+                                            class="text-base font-medium text-gray-900 hover:text-gray-700"
+                                            title="Ultrasound AI Read" href="/ultrasound">Ultrasound</a><a
+                                            class="text-base font-medium text-gray-900 hover:text-gray-700"
+                                            title="conversation" href="/conversation">voice up</a></div>
+                                    <div class="mt-6"></div>
+                                    <div class="mt-6">
+                                        <div class="relative">
+                                            <button
+                                                class="inline-flex w-full justify-center gap-x-1.5 border border-gray-300 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50">Login</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- </div> -->
+                            <nav class="hidden lg:flex space-x-1">
+                                <a class="px-3 py-2 rounded-md text-sm font-medium  text-gray-500 transition-colors duration-200"
+                                    title="X-ray AI Read" href="/x-ray">X-ray</a><a
+                                    class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200"
+                                    title="CT Scans AI Read" href="/ct-scan">CT Scans</a><a
+                                    class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200"
+                                    title="MRI AI Read" href="/mri">MRI</a><a
+                                    class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200"
+                                    title="Ultrasound AI Read" href="/ultrasound">Ultrasound</a><a
+                                    class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200"
+                                    title="conversation" href="/conversation">voice up</a>
+                            </nav>
+                            <div class="hidden lg:flex items-center space-x-4">
+
+                                <div id="oneTap" class="fixed top-0 right-0 "></div>
+                                <div class="relative"><button
+                                        class="inline-flex w-full justify-center gap-x-1.5 border border-gray-300 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50">Login</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+
+                <!-- JavaScript for Mobile Menu -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const mobileMenuButton = document.getElementById('mobileMenuButton');
+                        const closeMobileMenu = document.getElementById('closeMobileMenu');
+                        const mobileMenu = document.getElementById('mobileMenu');
+                        const menuOverlay = document.getElementById('menuOverlay');
+
+                        function toggleMobileMenu() {
+                            const isOpen = mobileMenu.classList.toggle('translate-x-0');
+                            menuOverlay.classList.toggle('hidden', !isOpen);
+
+                            // Prevent page scrolling when menu is open
+                            document.body.style.overflow = isOpen ? 'hidden' : '';
+                        }
+
+                        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+                        closeMobileMenu.addEventListener('click', toggleMobileMenu);
+                        menuOverlay.addEventListener('click', toggleMobileMenu);
+
+                        // Close on Escape key
+                        document.addEventListener('keydown', (e) => {
+                            if (e.key === 'Escape' && !menuOverlay.classList.contains('hidden')) {
+                                toggleMobileMenu();
+                            }
+                        });
+                    });
+                </script>
+
+                <main class="pb-16 pt-20">

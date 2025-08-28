@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multimodal Health AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body >
+    <section class="w-full min-h-screen bg-gradient-to-br from-[#f0f9ff] to-white relative overflow-hidden isolate">
+        <!-- Scientific background pattern -->
+        <!-- <div class="absolute inset-0 bg-[url('/grid-pattern.svg)] bg-center opacity-5 z-[-1]"></div> -->
+        
+        <!-- Main content container -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                <!-- Left content -->
+                <div class="lg:w-1/2 space-y-8">
+                    <!-- Trust badges -->
+                    <div class="animate-fade-in">
+                        <div class="inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-md">
+                            <!-- <div class="flex -space-x-2">
+                                <img src="/who-logo.svg" class="h-8 w-8" alt="WHO">
+                                <img src="/fda-logo.svg" class="h-8 w-8" alt="FDA">
+                                <img src="/ce-logo.svg" class="h-8 w-8" alt="CE Certified">
+                            </div> -->
+                            <span class="text-sm font-semibold text-gray-600">Certified Medical Device</span>
+                        </div>
+                    </div>
+    
+                    <!-- Main heading -->
+                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+                        Advanced AI Diagnosis for 
+                        <span class="relative inline-block">
+                            <span class="relative z-10 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                Medical Imaging
+                            </span>
+                            <div class="absolute -bottom-2 left-0 right-0 h-3 bg-blue-100/80 rounded-full"></div>
+                        </span>
+                    </h1>
+    
+                    <!-- Subheading -->
+                    <p class="text-xl text-gray-600 leading-relaxed">
+                        Our deep learning system detects 12 critical pathologies across 5 imaging modalities with 98.7% clinical accuracy. Get instant, radiologist-level reports in 3 simple steps.
+                    </p>
+    
+                    <!-- Process steps -->
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span class="text-blue-600 font-bold">1</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Upload Medical Image</h3>
+                                <p class="text-gray-500 text-sm">(DICOM, JPG, PNG supported)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-4 items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span class="text-blue-600 font-bold">2</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">AI Analysis in 30 Seconds</h3>
+                                <p class="text-gray-500 text-sm">(Proprietary Neural Network Processing)</p>
+                            </div>
+                        </div>
+    
+                        <div class="flex gap-4 items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <span class="text-blue-600 font-bold">3</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Download PDF Report</h3>
+                                <p class="text-gray-500 text-sm">(With Treatment Recommendations)</p>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- CTA Section -->
+                    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                        <a href="#upload" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            Upload Scan Now
+                        </a>
+                        <a href="#demo" class="px-8 py-4 rounded-xl font-semibold border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors">
+                            Watch Demo Video
+                        </a>
+                    </div>
+                </div>
+    
+                <!-- Right side - Interactive demo preview -->
+                <div class="lg:w-1/2 relative">
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl border-[14px] border-white transform rotate-[2deg] hover:rotate-0 transition-transform duration-300">
+                        <!-- Mock report interface -->
+                        <div class="bg-gray-50 p-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="h-3 w-3 rounded-full bg-red-500"></div>
+                                <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
+                                <div class="h-3 w-3 rounded-full bg-green-500"></div>
+                            </div>
+                            
+                            <!-- AI findings panel -->
+                            <div class="bg-white rounded-xl p-6 shadow-inner">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="font-bold text-lg">AI Analysis Report</h3>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                                        <span class="font-medium">Pneumonia Detection</span>
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">High Risk</span>
+                                    </div>
+                                    
+                                    <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                        <span class="font-medium">Lung Nodules</span>
+                                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Clear</span>
+                                    </div>
+                                    
+                                    <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                                        <span class="font-medium">Cardiomegaly</span>
+                                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Moderate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Modality badges -->
+                    <!-- <div class="absolute -bottom-8 left-0 right-0 flex justify-center gap-4">
+                        <div class="bg-white px-4 py-2 rounded-full shadow-md flex items-center gap-2">
+                            <img src="/xray-icon.svg" class="w-6 h-6" alt="X-ray">
+                            <span class="text-sm font-medium">X-ray</span>
+                        </div>
+                        <div class="bg-white px-4 py-2 rounded-full shadow-md flex items-center gap-2">
+                            <img src="/ct-icon.svg" class="w-6 h-6" alt="CT Scan">
+                            <span class="text-sm font-medium">CT</span>
+                        </div>
+                        <div class="bg-white px-4 py-2 rounded-full shadow-md flex items-center gap-2">
+                            <img src="/mri-icon.svg" class="w-6 h-6" alt="MRI">
+                            <span class="text-sm font-medium">MRI</span>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="bg-gray-50 min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-4xl bg-white rounded-xl shadow-md p-8">
+            <h1 class="text-3xl font-semibold text-center mb-6">Multimodal Health AI</h1>
+            <div id="uploadSection" class="mb-8">
+              <div id="dropzone" class="border-4 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center cursor-pointer hover:border-blue-400 transition">
+                <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.dcm,.nii,.nii.gz" class="absolute w-[fit-content] h-[fit-content] opacity-0 cursor-pointer" />
+                <div class="text-center space-y-2 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12v-8m0 0l-3 3m3-3l3 3" />
+                  </svg>
+                  <p class="text-gray-500">Click or drag & drop to upload your CT/MRI/DICOM</p>
+                  <p class="text-gray-400 text-sm">Supported: JPG, PNG, DICOM, NIfTI</p>
+                </div>
+              </div>
+              <button id="analyzeBtn" disabled class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md disabled:opacity-50">AI Read</button>
+            </div>
+        
+            <!-- Inference Result -->
+            <div id="resultSection" class="hidden">
+              <h2 class="text-2xl font-semibold mb-4">Inference Results</h2>
+              <table class="w-full table-auto border-collapse">
+                <thead>
+                  <tr class="bg-blue-100">
+                    <th class="px-4 py-2 text-left">Disease</th>
+                    <th class="px-4 py-2 text-left">Probability</th>
+                  </tr>
+                </thead>
+                <tbody id="resultTable" class="divide-y divide-gray-200"></tbody>
+              </table>
+            </div>
+        
+            <!-- Training Controls -->
+            <div id="trainingSection" class="mt-10">
+              <h2 class="text-2xl font-semibold mb-4">Model Training</h2>
+              <button id="trainBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-md">Start Training</button>
+              <pre id="trainLog" class="mt-4 h-48 overflow-auto bg-black text-green-300 p-4 rounded"></pre>
+            </div>
+          </div>
+        
+          <script>
+            const fileInput   = document.getElementById('fileInput');
+            const dropzone    = document.getElementById('dropzone');
+            const analyzeBtn  = document.getElementById('analyzeBtn');
+            const resultSec   = document.getElementById('resultSection');
+            const resultTbl   = document.getElementById('resultTable');
+            let selectedFile  = null;
+        
+            // File selection
+            fileInput.addEventListener('change', e => {
+              selectedFile = e.target.files[0] || null;
+              analyzeBtn.disabled = !selectedFile;
+              resultSec.classList.add('hidden');
+            });
+        
+            // Drag & drop
+            ['dragenter','dragover'].forEach(evt => {
+              dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add('border-blue-400'); });
+            });
+            ['dragleave','drop'].forEach(evt => {
+              dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('border-blue-400'); });
+            });
+            dropzone.addEventListener('drop', e => {
+              if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                selectedFile = e.dataTransfer.files[0];
+                analyzeBtn.disabled = false;
+              }
+            });
+        
+            // Analyze
+            analyzeBtn.addEventListener('click', async () => {
+              analyzeBtn.disabled = true;
+              analyzeBtn.textContent = 'Analyzing...';
+              resultTbl.innerHTML = '';
+        
+              const form = new FormData();
+              form.append('file', selectedFile);
+              const res = await fetch('/analyze/', { method: 'POST', body: form });
+              const data = await res.json();
+        
+              // Populate table
+              for (const [disease, prob] of Object.entries(data)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td class="px-4 py-2">${disease.replace('_', ' ').toUpperCase()}</td>
+                  <td class="px-4 py-2">${(prob*100).toFixed(2)}%</td>
+                `;
+                resultTbl.appendChild(row);
+              }
+              resultSec.classList.remove('hidden');
+              analyzeBtn.textContent = 'AI Read';
+              analyzeBtn.disabled = false;
+            });
+        
+            // Training
+            const trainBtn = document.getElementById('trainBtn');
+            const trainLog = document.getElementById('trainLog');
+            trainBtn.addEventListener('click', async () => {
+              trainBtn.disabled = true;
+              await fetch('/start-training/', { method: 'POST' });
+              // Poll logs
+              async function poll() {
+                const res = await fetch('/logs/');
+                const text = await res.text();
+                trainLog.textContent = text;
+                trainLog.scrollTop = trainLog.scrollHeight;
+                setTimeout(poll, 1000);
+              }
+              poll();
+            });
+          </script> 
+    </section>
+ 
+<!-- Add CSRF token at the top of your HTML template -->
+{% csrf_token %}
+
+<!-- Voice Consultation Section -->
+<div id="voiceSection" class="mt-10">
+    <h2 class="text-2xl font-semibold mb-4">Voice Consultation</h2>
+    <button id="voiceBtn" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full flex items-center gap-2 mx-auto">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z"/>
+      </svg>
+      Ask Questions (Press & Hold)
+    </button>
+    <div id="voiceStatus" class="text-center mt-2 text-gray-500"></div>
+    <audio id="responseAudio" class="mt-4 w-full"></audio>
+</div>
+
+<script>
+// Get CSRF token properly
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+// Voice processing logic
+const voiceBtn = document.getElementById('voiceBtn');
+const voiceStatus = document.getElementById('voiceStatus');
+const responseAudio = document.getElementById('responseAudio');
+let mediaRecorder, audioChunks = [];
+
+// Start recording
+voiceBtn.addEventListener('mousedown', async () => {
+    voiceStatus.textContent = 'Listening...';
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        
+        mediaRecorder.ondataavailable = e => {
+            audioChunks.push(e.data);
+        };
+    } catch(err) {
+        console.error('Microphone access error:', err);
+        voiceStatus.textContent = 'Microphone access denied';
+    }
+});
+
+// Stop recording and process
+voiceBtn.addEventListener('mouseup', async () => {
+    if(mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        
+        mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            await processAudio(audioBlob);
+            audioChunks = [];
+        };
+    }
+});
+
+async function processAudio(audioBlob) {
+    voiceStatus.textContent = 'Processing...';
+    
+    try {
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'recording.webm');
+        
+        const response = await fetch('/voice-query/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Server error');
+        }
+
+        const data = await response.json();
+        
+        if(data.audio_url) {
+            responseAudio.src = data.audio_url;
+            responseAudio.play().catch(e => {
+                console.error('Audio playback failed:', e);
+                voiceStatus.textContent = 'Click to play response';
+            });
+            voiceStatus.textContent = 'Response ready';
+        }
+        
+    } catch(err) {
+        console.error('Error:', err);
+        voiceStatus.textContent = err.message || 'Processing failed';
+    }
+}
+</script>
+
+
+
+    
+</body>
+</html>
